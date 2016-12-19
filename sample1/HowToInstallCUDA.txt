@@ -1,0 +1,124 @@
+//Time-stamp: <2008-06-13 22:43:56 hamada>
+
+---------------------------------------------
+1: SDKをホームディレクトリにインストールする
+---------------------------------------------
+
+[hamada@condor ~]$ /usr/local/src/CUDA.2.0/NVIDIA_CUDA_sdk_beta20b_linux.run
+
+Enter install path (default ~/NVIDIA_CUDA_SDK):               #  ←何も入力せずにエンターキーを押すだけ
+
+
+Enter CUDA install path (default /usr/local/cuda): /opt/cuda  #  ←cudaコンパイラのインストール場所を指定. 柴田研の場合は/opt/cuda
+
+以上
+
+---------------------------------------------
+2: CUDA環境変数を設定 ※ bashの場合を想定しています
+---------------------------------------------
+
+~/.bashrcに以下を追加.
+#---ここから---
+# CUDA
+alias setcuprofon='export CUDA_PROFILE=1'
+alias setcuprofoff='export CUDA_PROFILE=0'
+export CUDA_INSTALL_PATH=/opt/cuda
+export SDK_INSTALL_PATH=~/NVIDIA_CUDA_SDK
+export CUDA_PROFILE=0
+export CUDA_PROFILE_LOG=./profile.log
+export CUDA_PROFILE_CSV=1
+export PATH=$PATH:$CUDA_INSTALL_PATH/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$CUDA_INSTALL_PATH/lib
+#---ここまで---
+
+.bashrcに追加した環境変数を有効にする.
+[hamada@condor ~]$ source ~/.bashrc
+
+
+---------------------------------------------
+3: SDK付属のCUDAライブラリをコンパイル
+---------------------------------------------
+
+[hamada@condor common]$ cd ~/NVIDIA_CUDA_SDK/common/
+[hamada@condor common]$ make 
+[hamada@condor common]$ make emu=1
+[hamada@condor common]$ make -f Makefile_paramgl 
+
+---
+以上でCUDA環境は設定終了です.
+次にサンプルプログラムのコンパイルをして正しくCUDAが使えるようになっているか
+確認します.
+
+
+---------------------------------------------
+4: サンプルプログラムのコンパイルと実行 
+---------------------------------------------
+[hamada@condor ~]$ cd ~/NVIDIA_CUDA_SDK/projects/matrixMul 
+[hamada@condor matrixMul]$ make 
+[hamada@condor matrixMul]$ ../../bin/linux/release/matrixMul 
+
+↓のような実行結果が出れば正常です.
+
+Using device 0: GeForce 8800 GTS 512
+Processing time: 0.155000 (ms) 
+Test PASSED 
+
+Press ENTER to exit..
+
+---------------------------------------------
+5: サンプルプログラムのコンパイルと実行 2
+---------------------------------------------
+/export/home/hamada/sample-cuda/
+に非常に簡単なサンプルコードを置きました。
+ご自分のホームディレクトリにでもコピーして
+実行して下さい。
+
+この例は、
+「CPUからGPUに配列データを渡して+1してCPUに戻す」
+という簡単な処理です。
+
+CUDAのマニュアルを読まなくてもほとんどの意味を理解できるように
+なっていると思います。
+
+以下コンパイルと実行例です。
+
+[hamada@condor sample-cuda]$ make
+[hamada@condor sample-cuda]$ ./run.exe 
+0.000000, 1.000000
+1.000000, 2.000000
+2.000000, 3.000000
+3.000000, 4.000000
+4.000000, 5.000000
+5.000000, 6.000000
+6.000000, 7.000000
+7.000000, 8.000000
+8.000000, 9.000000
+9.000000, 10.000000
+10.000000, 11.000000
+11.000000, 12.000000
+12.000000, 13.000000
+13.000000, 14.000000
+14.000000, 15.000000
+15.000000, 16.000000
+16.000000, 17.000000
+
+以上
+
+---
+以下は補足事項です.
+
+---------------------------------------------
+6: emacsの設定
+---------------------------------------------
+CUDAコンパイラ(nvcc)は拡張子が.cuのファイル以外コンパイルしてくれません.
+emacsなどで.cuファイルを開くときに自動でc++-modeになってくれるといろい
+ろと便利です.  ~/.emacs.elに以下を追加するとCUDAコード(拡張子.cu)を自動
+的にc++-modeで開いてくれます.
+
+;;---ここから---
+;; for CUDA 
+(setq auto-mode-alist
+      (cons (cons "\\.cu$" 'c++-mode) auto-mode-alist))
+;;---ここまで---
+
+

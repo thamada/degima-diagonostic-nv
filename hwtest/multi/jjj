@@ -1,0 +1,51 @@
+
+==============NVSMI LOG==============
+
+
+Timestamp			: Sat Jan 15 08:13:47 2011
+
+Driver Version			: 260.19.26
+
+
+GPU 0:
+	Product Name		: GeForce GTX 295
+	PCI Device/Vendor ID	: 5eb10de
+	PCI Location ID		: 0:4:0
+	Board Serial		: 1116607971835
+	Display			: Not connected
+	Temperature		: 56 C
+	Utilization
+	    GPU			: 0%
+	    Memory		: 0%
+GPU 1:
+	Product Name		: GeForce GTX 295
+	PCI Device/Vendor ID	: 5eb10de
+	PCI Location ID		: 0:5:0
+	Board Serial		: 3300733059567
+	Display			: Connected
+	Temperature		: 56 C
+	Fan Speed		: 40%
+	Utilization
+	    GPU			: 0%
+	    Memory		: 0%
+GPU 2:
+	Product Name		: GeForce GTX 295
+	PCI Device/Vendor ID	: 5eb10de
+	PCI Location ID		: 0:8:0
+	Board Serial		: 2072288527150
+	Display			: Not connected
+	Temperature		: 46 C
+	Utilization
+	    GPU			: 0%
+	    Memory		: 0%
+GPU 3:
+	Product Name		: GeForce GTX 295
+	PCI Device/Vendor ID	: 5eb10de
+	PCI Location ID		: 0:9:0
+	Board Serial		: 695885726194
+	Display			: Not connected
+	Temperature		: 48 C
+	Fan Speed		: 40%
+	Utilization
+	    GPU			: 0%
+	    Memory		: 0%

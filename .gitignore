@@ -1,0 +1,9 @@
+#!Time-stamp: <2016-12-19 15:45:58 hamada>
+
+hwtest/memtest/
+run.exe
+run.x
+*~
+.*~
+*.o
+

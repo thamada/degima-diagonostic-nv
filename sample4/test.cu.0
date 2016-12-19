@@ -1,0 +1,92 @@
+#include <iostream>
+#include <string.h>
+#include <stdio.h>
+#include <math.h>
+using namespace std;
+
+namespace myNamespace_00_00{
+	__device__ double myDeviceFunc(double* in, int nword)
+	{
+		double z=0.0;
+
+		for(int i=0; i<nword; i++)
+			z += in[i];
+
+		return (z);
+	} 
+
+	__global__ void kernel(double* in, double* out, int nword)
+	{
+		int tid = threadIdx.x;
+		int bid = blockIdx.x;
+		int index = blockDim.x*bid + tid;
+		double z = myDeviceFunc(in, nword);
+		out[index] = z;
+	}
+
+	static double* hmem_i;
+	static double* hmem_o;
+	static double* dmem_i;
+	static double* dmem_o;
+
+	void run()
+	{
+		static bool is_first = true;
+		int nb    = 8;   //1024*1024*64*2; // max 1024*1024*64*2
+		int nthre = 1; // max 65535
+		int nthre_total = nb*nthre;
+		int nword =  1024;
+		int mem_size = sizeof(double) * nword;
+		int mem_size_o = nthre_total*sizeof(double);
+
+		if(true == is_first){
+			printf("# threads:   %d \n", nthre_total);
+			printf("mem_size:    %d MB\n", mem_size >> 20);
+			printf("mem_size_o:    %d kB\n", mem_size_o >> 10);
+		}
+		// input buffer (Host)
+		if(true == is_first){
+			hmem_i = (double*) malloc(mem_size);
+			for(int i=0; i<nword; i++) hmem_i[i] = (double)i;
+		}
+		// input buffer (GPU)
+		if(true == is_first){
+			cudaMalloc( (void**) &dmem_i, mem_size);
+			cudaMemcpy(dmem_i, hmem_i, mem_size, cudaMemcpyHostToDevice);
+		}
+		// output buffer (Host/GPU)
+		if(true == is_first){
+			cudaMalloc( (void**) &dmem_o, mem_size_o);
+			hmem_o = (double*) malloc(mem_size_o);
+		}
+
+		dim3  grid(nb);
+		dim3  threads(nthre);
+		kernel<<< grid, threads >>>(dmem_i, dmem_o, nword);
+		cudaMemcpy(hmem_o, dmem_o, mem_size_o, cudaMemcpyDeviceToHost);
+
+		for(int i=0; i<nthre_total; i++){
+			double z = hmem_o[i];
+			if(i>(nthre_total-4)) printf("%d, %f\n", i, z);
+		}
+
+		is_first = false;
+		return;
+	}
+
+	void mem_free(){
+		free(hmem_i);
+		free(hmem_o);
+		cudaFree(dmem_i);
+		cudaFree(dmem_o);
+	}
+}
+
+int main( int argc, char** argv)
+{
+	myNamespace_00_00::run();
+	myNamespace_00_00::run();
+	myNamespace_00_00::run();
+
+	myNamespace_00_00::mem_free();
+}

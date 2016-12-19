@@ -1,0 +1,4 @@
+#!/bin/bash
+
+nvidia-smi -q -a |grep -v 'Product Name' |grep -v PCI |grep -v Utilization |grep -v 'Driver Version' |grep -v Display
+
